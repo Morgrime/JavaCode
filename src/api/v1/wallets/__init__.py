@@ -1,4 +1,4 @@
-from wallet_router import router as wallet_router
+from .wallet_router import router as wallet_router
 from fastapi import APIRouter
 
 

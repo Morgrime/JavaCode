@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Numeric, DateTime, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
-from src.core.database import Base
+from database.session import Base
+
 
 class Wallet(Base):
     __tablename__ = "wallets"

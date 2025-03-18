@@ -2,7 +2,7 @@ from uuid import UUID
 from decimal import Decimal
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.models.wallet_model import Wallet
+from models.wallet_model import Wallet
 
 
 async def get_wallet_balance(
