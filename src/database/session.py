@@ -19,7 +19,7 @@ DB_URL = (
 )
 
 # Инициализация движка и сессии
-engine = create_async_engine(DB_URL, echo=getenv("DEBUG") == "true")
+engine = create_async_engine(DB_URL, echo=True)
 async_session = sessionmaker(engine,
                              class_=AsyncSession,
                              expire_on_commit=False)

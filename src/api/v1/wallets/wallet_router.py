@@ -6,7 +6,9 @@ from typing import Annotated
 from schemas.wallet_schema import WalletOperation, WalletResponse
 from services.wallet_service import (
     get_wallet_balance,
-    process_wallet_operation
+    process_wallet_operation,
+    delete_wallet,
+    add_wallet
 )
 from database.session import get_session  # Обновленный импорт
 
@@ -29,7 +31,7 @@ async def get_balance(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Wallet not found"
         )
-    return WalletResponse(balance=balance)
+    return WalletResponse(balance=balance, wallet_id=wallet_uuid)
 
 
 @router.post("/{wallet_uuid}/operation", status_code=status.HTTP_200_OK)
@@ -62,4 +64,27 @@ async def perform_operation(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error"
         )
-    return WalletResponse(balance=new_balance)
+    return WalletResponse(balance=new_balance, wallet_id=wallet_uuid)
+
+
+@router.delete("/{wallet_uuid}", status_code=status.HTTP_204_NO_CONTENT)
+async def remove_wallet(
+    wallet_uuid: UUID,
+    session: Annotated[AsyncSession, Depends(get_session)]
+):
+    deleted = await delete_wallet(session, wallet_uuid)
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Wallet not found"
+        )
+
+
+@router.post("/",
+             response_model=WalletResponse,
+             status_code=status.HTTP_201_CREATED)
+async def create_new_wallet(
+    session: Annotated[AsyncSession, Depends(get_session)]
+) -> WalletResponse:
+    wallet_uuid = await add_wallet(session)
+    return WalletResponse(balance=0.00, wallet_id=wallet_uuid)
