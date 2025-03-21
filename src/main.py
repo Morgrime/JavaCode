@@ -1,3 +1,5 @@
+import uvicorn
+
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from api.v1.wallets import main_router
@@ -24,3 +26,7 @@ app = FastAPI(title="Wallet API",
               version="1.0.0",
               lifespan=lifespan)
 app.include_router(main_router)
+
+
+if __name__ == '__main__':
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
