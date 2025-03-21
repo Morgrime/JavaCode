@@ -1,31 +1,15 @@
-from os import getenv
 from typing import AsyncGenerator
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
-from dotenv import load_dotenv
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+# from sqlalchemy.orm import sessionmaker
 
-# Загрузка переменных окружения
-load_dotenv()
-POSTGRES_USER = getenv('POSTGRES_USER')
-POSTGRES_PASS = getenv('POSTGRES_PASSWORD')
-POSTGRES_HOST = getenv('POSTGRES_HOST')
-POSTGRES_PORT = getenv('POSTGRES_PORT')
-POSTGRES_DB = getenv('POSTGRES_DB')
-
-# Настройки подключения к БД
-DB_URL = (
-    f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASS}"
-    f"@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
-)
+from database.config import settings
+from models.wallet_model import Base
 
 # Инициализация движка и сессии
-engine = create_async_engine(DB_URL, echo=True)
-async_session = sessionmaker(engine,
-                             class_=AsyncSession,
-                             expire_on_commit=False)
-
-# База для моделей
-Base = declarative_base()
+engine = create_async_engine(url=settings.DATABASE_URL_asyncpg, echo=True)
+async_session = async_sessionmaker(engine,
+                                   class_=AsyncSession,
+                                   expire_on_commit=False)
 
 
 async def init_db():
